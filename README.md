@@ -13,25 +13,20 @@ This is a simple **Task Manager** that showcases:
 
 ## Screenshots
 
-### Main Window — Task List
-The main window displays your tasks with status indicators, priority badges, and quick actions. Turbo Drive handles all navigation natively.
+### Dashboard
+The dashboard shows task statistics, a "Desktop Features Active" banner (only visible in the native app), and recent tasks. The `turbo_desktop_only` helper controls what's shown in the desktop shell vs a regular browser.
+
+![Dashboard](docs/screenshots/dashboard.png)
+
+### Task List
+The task list displays all tasks with status indicators, priority badges, and action buttons. The "New Task" button links to `/tasks/new` which the path configuration routes to a native modal window.
 
 ![Task List](docs/screenshots/task-list.png)
 
-### Modal Window — New Task
-Creating a new task opens in a native modal window, configured via path configuration rules. The form uses standard Rails form helpers with Turbo.
+### New Task — Modal Window
+Creating a new task opens in a native modal window, configured via path configuration rules. The form uses standard Rails form helpers with Turbo. Any URL matching `/new$` or `/edit$` opens as a modal overlay.
 
 ![New Task Modal](docs/screenshots/new-task-modal.png)
-
-### Native Notification
-Completing a task triggers a native OS notification using the bridge notification component.
-
-![Native Notification](docs/screenshots/native-notification.png)
-
-### Desktop vs Web
-The app detects whether it's running in Turbo Desktop or a regular browser and adapts the UI accordingly.
-
-![Desktop Mode](docs/screenshots/desktop-mode.png)
 
 ## Prerequisites
 
