@@ -1,0 +1,12 @@
+{
+  "server_url": "http://localhost:3000",
+  "app_name": "Task Manager",
+  "user_agent": "Turbo Desktop/0.1.0",
+  "window": {
+    "width": 1000,
+    "height": 700,
+    "min_width": 800,
+    "min_height": 500,
+    "resizable": true
+  }
+}

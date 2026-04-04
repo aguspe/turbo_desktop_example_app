@@ -1,0 +1,50 @@
+<div class="task-detail">
+  <div class="section-header">
+    <h1><%= @task.title %></h1>
+    <div class="task-detail-actions">
+      <%= link_to "Edit", edit_task_path(@task), class: "btn btn-secondary" %>
+      <%= link_to "Back", tasks_path, class: "btn btn-secondary" %>
+    </div>
+  </div>
+
+  <div class="task-detail-card">
+    <div class="detail-row">
+      <span class="detail-label">Status</span>
+      <span class="detail-value">
+        <% if @task.completed? %>
+          <span class="status-badge completed">Completed</span>
+        <% else %>
+          <span class="status-badge pending">Pending</span>
+        <% end %>
+      </span>
+    </div>
+
+    <div class="detail-row">
+      <span class="detail-label">Priority</span>
+      <span class="detail-value">
+        <span class="priority-badge priority-<%= @task.priority %>"><%= @task.priority.capitalize %></span>
+      </span>
+    </div>
+
+    <% if @task.description.present? %>
+      <div class="detail-row">
+        <span class="detail-label">Description</span>
+        <span class="detail-value"><%= @task.description %></span>
+      </div>
+    <% end %>
+
+    <div class="detail-row">
+      <span class="detail-label">Created</span>
+      <span class="detail-value"><%= @task.created_at.strftime("%B %d, %Y at %I:%M %p") %></span>
+    </div>
+  </div>
+
+  <%# Desktop-only: show bridge component info %>
+  <%= turbo_desktop_only do %>
+    <div class="desktop-info-box">
+      <strong>Desktop Tip:</strong> Click "Edit" above to see the modal window
+      in action. The path configuration routes <code>/edit$</code> URLs to a
+      native modal overlay.
+    </div>
+  <% end %>
+</div>

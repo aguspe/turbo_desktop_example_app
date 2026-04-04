@@ -1,0 +1,70 @@
+<div class="tasks-page">
+  <div class="section-header">
+    <h1>Tasks</h1>
+    <%# This link goes to /tasks/new, which matches the "/new$" path rule.
+        In the desktop shell, it opens as a native modal window.
+        In a regular browser, it navigates normally. %>
+    <%= link_to "New Task", new_task_path, class: "btn btn-primary" %>
+  </div>
+
+  <div class="task-list">
+    <% @tasks.each do |task| %>
+      <div class="task-card" id="<%= dom_id(task) %>">
+        <div class="task-card-header">
+          <div class="task-status">
+            <% if task.completed? %>
+              <span class="status-icon completed" title="Completed">&#10003;</span>
+            <% else %>
+              <span class="status-icon pending" title="Pending">&#9675;</span>
+            <% end %>
+          </div>
+          <div class="task-title">
+            <%= link_to task.title, task_path(task) %>
+          </div>
+          <span class="priority-badge priority-<%= task.priority %>"><%= task.priority %></span>
+        </div>
+
+        <% if task.description.present? %>
+          <p class="task-description"><%= truncate(task.description, length: 120) %></p>
+        <% end %>
+
+        <div class="task-actions">
+          <%# This link goes to /tasks/:id/edit, which matches "/edit$".
+              In the desktop shell, it opens as a modal. %>
+          <%= link_to "Edit", edit_task_path(task), class: "btn btn-sm btn-secondary" %>
+
+          <% unless task.completed? %>
+            <%# Mark as complete — triggers a native notification in the desktop app.
+                The data attributes are used by the notification bridge component. %>
+            <%= button_to "Complete", task_path(task),
+                  method: :patch,
+                  params: { task: { completed: true } },
+                  class: "btn btn-sm btn-success",
+                  data: {
+                    # Bridge component data attributes for native notification
+                    # When this button is clicked, turbo-desktop.js picks up these
+                    # attributes and sends a bridge message to trigger a native
+                    # OS notification
+                    **turbo_desktop_bridge("notification",
+                      title: "Task Completed!",
+                      body: task.title
+                    )
+                  } %>
+          <% end %>
+
+          <%= button_to "Delete", task_path(task),
+                method: :delete,
+                class: "btn btn-sm btn-danger",
+                data: { turbo_confirm: "Are you sure?" } %>
+        </div>
+      </div>
+    <% end %>
+
+    <% if @tasks.empty? %>
+      <div class="empty-state">
+        <p>No tasks yet. Create your first task!</p>
+        <%= link_to "New Task", new_task_path, class: "btn btn-primary" %>
+      </div>
+    <% end %>
+  </div>
+</div>

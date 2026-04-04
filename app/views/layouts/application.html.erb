@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Task Manager — Turbo Desktop Example</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <%= csrf_meta_tags %>
+  <%= csp_meta_tag %>
+  <%= stylesheet_link_tag "application" %>
+  <%= javascript_importmap_tags %>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="container">
+      <div class="navbar-brand">
+        <%= link_to root_path, class: "navbar-logo" do %>
+          <span class="logo-icon">&#9745;</span>
+          <span>Task Manager</span>
+        <% end %>
+      </div>
+      <div class="navbar-links">
+        <%= link_to "Dashboard", root_path, class: "nav-link" %>
+        <%= link_to "Tasks", tasks_path, class: "nav-link" %>
+      </div>
+
+      <%# Desktop-only: show platform badge in the navbar %>
+      <%# turbo_desktop_only renders its block ONLY when the request
+          comes from the Turbo Desktop native shell %>
+      <%= turbo_desktop_only do %>
+        <span class="badge badge-desktop">
+          Desktop (<%= turbo_desktop_platform %>)
+        </span>
+      <% end %>
+
+      <%# Web-only: show a prompt to try the desktop app %>
+      <%= turbo_web_only do %>
+        <span class="badge badge-web">Web Browser</span>
+      <% end %>
+    </div>
+  </nav>
+
+  <main class="container">
+    <% if notice.present? %>
+      <div class="flash flash-notice"><%= notice %></div>
+    <% end %>
+    <% if alert.present? %>
+      <div class="flash flash-alert"><%= alert %></div>
+    <% end %>
+
+    <%= yield %>
+  </main>
+
+  <footer class="container footer">
+    <p>
+      Built with
+      <a href="https://github.com/aguspe/turbo_desktop">Turbo Desktop</a>,
+      <a href="https://rubyonrails.org">Rails</a>, and
+      <a href="https://tauri.app">Tauri</a>.
+    </p>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,65 @@
+<div class="dashboard">
+  <h1>Dashboard</h1>
+
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-number"><%= @total_tasks %></div>
+      <div class="stat-label">Total Tasks</div>
+    </div>
+    <div class="stat-card stat-completed">
+      <div class="stat-number"><%= @completed_tasks %></div>
+      <div class="stat-label">Completed</div>
+    </div>
+    <div class="stat-card stat-pending">
+      <div class="stat-number"><%= @pending_tasks %></div>
+      <div class="stat-label">Pending</div>
+    </div>
+  </div>
+
+  <%# Desktop-only section: shows native feature tips %>
+  <%= turbo_desktop_only do %>
+    <div class="desktop-features-banner">
+      <h3>Desktop Features Active</h3>
+      <p>
+        You're running in Turbo Desktop! Native notifications, modal windows,
+        and keyboard shortcuts are all available. Try creating a new task &mdash;
+        it will open in a native modal window.
+      </p>
+    </div>
+  <% end %>
+
+  <%# Web-only section: encourage desktop download %>
+  <%= turbo_web_only do %>
+    <div class="web-banner">
+      <h3>Try the Desktop App</h3>
+      <p>
+        This app also runs as a native desktop application using
+        <a href="https://github.com/aguspe/turbo_desktop">Turbo Desktop</a>.
+        Get native notifications, modal windows, and more!
+      </p>
+    </div>
+  <% end %>
+
+  <div class="recent-tasks">
+    <div class="section-header">
+      <h2>Recent Tasks</h2>
+      <%= link_to "View All", tasks_path, class: "btn btn-secondary" %>
+    </div>
+
+    <% @recent_tasks.each do |task| %>
+      <div class="task-row">
+        <div class="task-status">
+          <% if task.completed? %>
+            <span class="status-icon completed">&#10003;</span>
+          <% else %>
+            <span class="status-icon pending">&#9675;</span>
+          <% end %>
+        </div>
+        <div class="task-info">
+          <%= link_to task.title, task_path(task) %>
+          <span class="priority-badge priority-<%= task.priority %>"><%= task.priority %></span>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>

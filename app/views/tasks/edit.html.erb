@@ -1,0 +1,8 @@
+<%# This page also opens in a native MODAL window.
+    The path rule { patterns: ["/edit$"], properties: { presentation: "modal" } }
+    catches any URL ending in /edit and opens it as a modal overlay. %>
+
+<div class="modal-content">
+  <h1>Edit Task</h1>
+  <%= render "form", task: @task %>
+</div>

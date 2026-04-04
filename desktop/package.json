@@ -1,0 +1,12 @@
+{
+  "name": "turbo-desktop-example",
+  "version": "0.1.0",
+  "description": "Desktop shell for the Turbo Desktop example Task Manager app",
+  "scripts": {
+    "dev": "cargo tauri dev",
+    "build": "cargo tauri build"
+  },
+  "dependencies": {
+    "turbo-desktop": "latest"
+  }
+}
