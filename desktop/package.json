@@ -7,6 +7,6 @@
     "build": "cargo tauri build"
   },
   "dependencies": {
-    "turbo-desktop": "latest"
+    "turbo-desktop": "file:../.."
   }
 }
