@@ -10,6 +10,15 @@ This is a simple **Task Manager** that showcases:
 - **Desktop-only UI** elements (native menu items, keyboard shortcuts)
 - **System tray** integration
 - **Path configuration** routing
+- **Dev Inspector** — press <kbd>Cmd/Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>D</kbd> in the desktop app for an
+  in-app overlay of bridge traffic, active components, path-config presentation, and shell facts
+
+## Dev Inspector
+
+In the desktop shell (development), press <kbd>Cmd/Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>D</kbd> to toggle
+the Dev Inspector. It's enabled here via `config.inspector_enabled` in
+`config/initializers/turbo_desktop.rb` and the `turbo_desktop_inspector_meta_tag` in the layout
+`<head>`; the gem serves the inspector's JavaScript same-origin, so no extra setup is needed.
 
 ## Screenshots
 

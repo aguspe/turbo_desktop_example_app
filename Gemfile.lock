@@ -1,3 +1,12 @@
+GIT
+  remote: https://github.com/aguspe/turbo_desktop.git
+  revision: 2cf9d3cafe3e5b33993bc0c80cd2131aceae4709
+  glob: turbo_desktop-rails/*.gemspec
+  specs:
+    turbo_desktop-rails (0.1.1)
+      rails (>= 7.0)
+      turbo-rails (>= 1.0)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -201,9 +210,6 @@ GEM
     turbo-rails (2.0.23)
       actionpack (>= 7.1.0)
       railties (>= 7.1.0)
-    turbo_desktop-rails (0.0.1)
-      rails (>= 7.0)
-      turbo-rails (>= 1.0)
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
     uri (1.1.1)
@@ -219,6 +225,7 @@ GEM
     zeitwerk (2.7.5)
 
 PLATFORMS
+  arm64-darwin-23
   arm64-darwin-25
 
 DEPENDENCIES
@@ -230,7 +237,7 @@ DEPENDENCIES
   sqlite3 (~> 2.0)
   stimulus-rails
   turbo-rails
-  turbo_desktop-rails
+  turbo_desktop-rails!
   web-console
 
 RUBY VERSION

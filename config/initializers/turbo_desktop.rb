@@ -36,4 +36,8 @@ TurboDesktop.configure do |config|
       # { patterns: ["/tasks/\\d+$"], properties: { presentation: "new_window" } },
     ]
   }
+
+  # Dev Inspector — in-app overlay (Cmd/Ctrl+Shift+D) that shows bridge traffic,
+  # active components, path-config presentation, and shell facts. Dev only.
+  config.inspector_enabled = Rails.env.development?
 end

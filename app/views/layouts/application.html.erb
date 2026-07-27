@@ -7,6 +7,10 @@
   <%= csp_meta_tag %>
   <%= stylesheet_link_tag "application" %>
   <%= javascript_importmap_tags %>
+
+  <%# Enables the Turbo Desktop Dev Inspector (dev only) and points the shell at
+      the gem-served inspector assets. No-op in production / plain browsers. %>
+  <%= turbo_desktop_inspector_meta_tag %>
 </head>
 <body>
   <nav class="navbar">
