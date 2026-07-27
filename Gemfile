@@ -17,6 +17,7 @@ gem "propshaft"
 # Hotwire
 gem "turbo-rails"
 gem "stimulus-rails"
+gem "importmap-rails"
 
 # Turbo Desktop — gives your Rails app desktop shell awareness
 # This gem provides helpers like turbo_desktop_app?, turbo_desktop_only,
