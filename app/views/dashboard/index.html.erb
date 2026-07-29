@@ -18,13 +18,39 @@
 
   <%# Desktop-only section: shows native feature tips %>
   <%= turbo_desktop_only do %>
-    <div class="desktop-features-banner">
+    <div class="desktop-features-banner"
+         data-controller="import"
+         data-action="turbo-desktop:drop@document->import#filesDropped
+                      turbo-desktop:file-open@document->import#filesDropped
+                      turbo-desktop:drag-enter@document->import#highlight
+                      turbo-desktop:drag-leave@document->import#unhighlight">
       <h3>Desktop Features Active</h3>
       <p>
-        You're running in Turbo Desktop! Native notifications, modal windows,
-        and keyboard shortcuts are all available. Try creating a new task &mdash;
-        it will open in a native modal window.
+        You're running in Turbo Desktop. Try the native side of this app:
       </p>
+      <ul class="desktop-feature-list">
+        <li><strong>Drop a .csv anywhere on this window</strong> to import tasks
+            &mdash; the page receives the real file path.</li>
+        <li>Open a .csv <em>with</em> this app (or drop it on the dock icon) and
+            it imports the same way, even from a cold start.</li>
+        <li>Create a task &mdash; it opens in a native modal window.</li>
+        <li>Complete a task &mdash; a native notification fires.</li>
+      </ul>
+
+      <div class="desktop-feature-actions">
+        <button class="btn btn-secondary"
+                data-controller="clipboard"
+                data-action="clipboard#pasteAsTask">
+          New task from clipboard
+        </button>
+
+        <label class="autostart-toggle" data-controller="autostart">
+          <input type="checkbox"
+                 data-autostart-target="checkbox"
+                 data-action="autostart#toggle">
+          Start Task Manager when I log in
+        </label>
+      </div>
     </div>
   <% end %>
 

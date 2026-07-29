@@ -2,6 +2,16 @@
   <div class="section-header">
     <h1><%= @task.title %></h1>
     <div class="task-detail-actions">
+      <%# Desktop only: writes to the system clipboard — no user-gesture or
+          focus requirements, unlike the browser clipboard API. %>
+      <%= turbo_desktop_only do %>
+        <button class="btn btn-secondary"
+                data-controller="clipboard"
+                data-clipboard-text-value="<%= "#{@task.title}\n#{@task.description}" %>"
+                data-action="clipboard#copy">
+          Copy
+        </button>
+      <% end %>
       <%= link_to "Edit", edit_task_path(@task), class: "btn btn-secondary" %>
       <%= link_to "Back", tasks_path, class: "btn btn-secondary" %>
     </div>

@@ -8,5 +8,20 @@
     "min_width": 800,
     "min_height": 500,
     "resizable": true
+  },
+  "filesystem": {
+    "allowed_roots": []
+  },
+  "sudo": {
+    "enabled": false,
+    "allowed_commands": [],
+    "confirm": true
+  },
+  "navigation": {
+    "internal_hosts": []
+  },
+  "server": {
+    "command": "bin/rails server",
+    "directory": ".."
   }
 }

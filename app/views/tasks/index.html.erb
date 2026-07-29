@@ -1,10 +1,26 @@
-<div class="tasks-page">
+<div class="tasks-page"
+     data-controller="import"
+     data-action="turbo-desktop:drop@document->import#filesDropped
+                  turbo-desktop:file-open@document->import#filesDropped
+                  turbo-desktop:drag-enter@document->import#highlight
+                  turbo-desktop:drag-leave@document->import#unhighlight">
   <div class="section-header">
     <h1>Tasks</h1>
-    <%# This link goes to /tasks/new, which matches the "/new$" path rule.
-        In the desktop shell, it opens as a native modal window.
-        In a regular browser, it navigates normally. %>
-    <%= link_to "New Task", new_task_path, class: "btn btn-primary" %>
+    <div class="section-actions">
+      <%# Desktop only: native save dialog → CSV written wherever the user
+          points it, no filesystem roots needed — the pick is the consent. %>
+      <%= turbo_desktop_only do %>
+        <button class="btn btn-secondary"
+                data-controller="export"
+                data-action="export#save">
+          Export CSV&hellip;
+        </button>
+      <% end %>
+      <%# This link goes to /tasks/new, which matches the "/new$" path rule.
+          In the desktop shell, it opens as a native modal window.
+          In a regular browser, it navigates normally. %>
+      <%= link_to "New Task", new_task_path, class: "btn btn-primary" %>
+    </div>
   </div>
 
   <div class="task-list">
