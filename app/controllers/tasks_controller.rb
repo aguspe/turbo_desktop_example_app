@@ -3,6 +3,36 @@ class TasksController < ApplicationController
 
   def index
     @tasks = Task.order(created_at: :desc)
+
+    respond_to do |format|
+      format.html
+      # Plain CSV of every task. The desktop export button fetches this and
+      # writes it wherever the user pointed the native save dialog.
+      format.csv do
+        csv = "title,description,priority,completed\n" + @tasks.map { |t|
+          [ t.title, t.description, t.priority, t.completed ].map { |v| csv_field(v) }.join(",")
+        }.join("\n")
+        send_data csv, filename: "tasks.csv", type: "text/csv"
+      end
+    end
+  end
+
+  # POST /tasks/import — rows from a CSV the user dropped on the window or
+  # opened with the app. The desktop shell hands the page real file paths;
+  # the page reads them through the filesystem bridge and posts the text here.
+  def import
+    created = 0
+    params.require(:csv).each_line.drop(1).each do |line|
+      title, description, priority = line.strip.split(",", 3)
+      next if title.blank?
+
+      Task.create(title: title.delete('"'),
+                  description: description.to_s.delete('"'),
+                  priority: %w[low medium high].include?(priority.to_s.delete('"')) ? priority.delete('"') : "medium")
+      created += 1
+    end
+
+    redirect_to tasks_path, notice: "Imported #{created} #{'task'.pluralize(created)}."
   end
 
   def show
@@ -52,5 +82,10 @@ class TasksController < ApplicationController
 
   def task_params
     params.require(:task).permit(:title, :description, :priority, :completed)
+  end
+
+  def csv_field(value)
+    text = value.to_s.gsub('"', '""')
+    text.match?(/[",\n]/) ? "\"#{text}\"" : text
   end
 end
