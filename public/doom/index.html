@@ -1,0 +1,88 @@
+<!doctype html>
+<!--
+  DOOM (1993), running as WebAssembly inside a Rails public/ directory,
+  presented by Turbo Desktop in its own native window via one path rule:
+    { "patterns": ["/doom"], "properties": { "presentation": "new_window" } }
+
+  wasm port: linuxdoom-1.10 by diekmann/wasm-fizzbuzz (shareware WAD embedded).
+-->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>DOOM on Rails</title>
+  <style>
+    :root { color-scheme: dark; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      background: #0b0c10;
+      color: #e6edf3;
+      font-family: -apple-system, "Segoe UI", sans-serif;
+    }
+    h1 {
+      margin: 0;
+      font-size: 20px;
+      letter-spacing: 0.04em;
+    }
+    h1 .rails { color: #e73c7e; }
+    #screen {
+      width: min(92vw, 960px);
+      aspect-ratio: 8 / 5;
+      height: auto;
+      image-rendering: pixelated;
+      border: 1px solid #2a2f3a;
+      border-radius: 8px;
+      outline: none;
+      background: #000;
+    }
+    .hint { font-size: 13px; color: #8b949e; }
+    kbd {
+      background: #1c2128;
+      border: 1px solid #2a2f3a;
+      border-bottom-width: 2px;
+      border-radius: 4px;
+      padding: 1px 6px;
+      font-family: ui-monospace, monospace;
+      font-size: 12px;
+      color: #e6edf3;
+    }
+    #focushint { font-size: 13px; color: #e8b84b; min-height: 1em; margin: 0; }
+    /* Required by main.js but not part of the show */
+    .debug { position: absolute; left: -9999px; }
+  </style>
+</head>
+<body>
+  <h1>DOOM <span class="rails">on Rails</span></h1>
+
+  <canvas id="screen" width="640" height="400" tabindex="0">DOOM renders here.</canvas>
+
+  <p id="focushint"></p>
+  <p class="hint">
+    <kbd>&#x23CE;</kbd> start &middot; <kbd>&uarr;</kbd><kbd>&darr;</kbd><kbd>&larr;</kbd><kbd>&rarr;</kbd> move &middot;
+    <kbd>ctrl</kbd> shoot &middot; <kbd>space</kbd> open doors &middot; <kbd>alt</kbd>+arrows strafe
+  </p>
+  <p class="hint">Served from <code>public/doom/</code> by Rails &mdash; the native window is one path-configuration rule.</p>
+
+  <div class="debug" aria-hidden="true">
+    <button id="enterButton">&#x23CE;</button>
+    <button id="leftButton">&#x2190;</button>
+    <button id="upButton">&#x2191;</button>
+    <button id="downButton">&#x2193;</button>
+    <button id="rightButton">&#x2192;</button>
+    <button id="ctrlButton">ctrl</button>
+    <button id="spaceButton">space</button>
+    <button id="altButton">alt</button>
+    <div id="output"></div>
+    <span id="getmsps_stats">0</span><span id="getms_stats">0</span>
+    <span id="fps_stats">0</span><span id="drawframes_stats">0</span>
+    <span id="animationfps_stats">0</span>
+  </div>
+
+  <script src="main.js" defer></script>
+</body>
+</html>

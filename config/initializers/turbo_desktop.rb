@@ -34,6 +34,10 @@ TurboDesktop.configure do |config|
       # Task detail pages open in a new window
       # Uncomment this if you want task details to open in a separate window:
       # { patterns: ["/tasks/\\d+$"], properties: { presentation: "new_window" } },
+
+      # DOOM (WebAssembly, served from public/doom/) gets its own native
+      # window. That's the whole integration: one rule.
+      { patterns: ["/doom"], properties: { presentation: "new_window", title: "DOOM" } }
     ]
   }
 

@@ -44,6 +44,10 @@
           New task from clipboard
         </button>
 
+        <%# DOOM as WebAssembly from public/doom/ — the path configuration
+            routes /doom to its own native window. %>
+        <%= link_to "Play DOOM", "/doom/index.html", class: "btn btn-secondary" %>
+
         <label class="autostart-toggle" data-controller="autostart">
           <input type="checkbox"
                  data-autostart-target="checkbox"
