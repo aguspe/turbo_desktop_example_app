@@ -414,6 +414,14 @@ export default class extends Controller {
   save() {
     localStorage.setItem(STORE, JSON.stringify(this.results))
 
+    // Once things have settled, and only the latest: several marks in a row
+    // would otherwise race each other to the server, and an early one could
+    // land last.
+    clearTimeout(this.reporting)
+    this.reporting = setTimeout(() => this.report(), 300)
+  }
+
+  report() {
     const token = document.querySelector('meta[name="csrf-token"]')?.content
     fetch("/checks/report", {
       method: "POST",
