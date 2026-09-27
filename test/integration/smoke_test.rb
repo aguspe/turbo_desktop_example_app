@@ -1,11 +1,11 @@
 require "test_helper"
 
 class SmokeTest < ActionDispatch::IntegrationTest
-  DESKTOP = { "User-Agent" => "Turbo Desktop/0.2.2 (macOS; aarch64)" }.freeze
+  DESKTOP = { "User-Agent" => "Turbo Desktop/0.2.3 (macOS; aarch64)" }.freeze
   BROWSER = { "User-Agent" => "Mozilla/5.0 (Macintosh) Safari/605.1.15" }.freeze
 
-  test "the gem in use is the 0.2 line" do
-    assert_operator Gem::Version.new(TurboDesktop::VERSION), :>=, Gem::Version.new("0.2.2")
+  test "the gem in use has the Dev Inspector fix" do
+    assert_operator Gem::Version.new(TurboDesktop::VERSION), :>=, Gem::Version.new("0.2.3")
   end
 
   test "the health check answers, so a launcher can tell the server is up" do

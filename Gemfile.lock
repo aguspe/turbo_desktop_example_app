@@ -202,7 +202,7 @@ GEM
     turbo-rails (2.0.23)
       actionpack (>= 7.1.0)
       railties (>= 7.1.0)
-    turbo_desktop-rails (0.2.2)
+    turbo_desktop-rails (0.2.3)
       rails (>= 7.0)
       turbo-rails (>= 1.0)
     tzinfo (2.0.6)
