@@ -53,6 +53,7 @@ export default class extends Controller {
     await this.addMenuItem()
     await this.registerShortcut()
     await this.packaged()
+    await this.inspector()
   }
 
   async whereAmI() {
@@ -146,6 +147,30 @@ export default class extends Controller {
     } else {
       this.mark("clipboard", "fail", `Wrote "${text}", read back ${JSON.stringify(read)}.`)
     }
+  }
+
+  async inspector() {
+    if (!this.present("inspector")) return
+
+    // The shell loads it once the page has, so give it a moment.
+    for (let tries = 0; tries < 20; tries++) {
+      if (document.querySelector("[data-turbo-desktop-inspector]")) {
+        return this.mark("inspector", "running", "Loaded. Press Cmd/Ctrl+Shift+D to open it.")
+      }
+      await new Promise((resolve) => setTimeout(resolve, 250))
+    }
+
+    this.mark("inspector", "fail", this.shell._inspectorError || "It did not load.")
+  }
+
+  async devtools() {
+    if (!this.present("devtools")) return
+
+    const response = await this.shell.toggleDevTools()
+    if (!response) return this.mark("devtools", "fail", "The shell did not answer.")
+    if (response.status === "unavailable") return this.refused("devtools", response)
+
+    this.mark("devtools", "running", `The shell says: ${response.status}. Did you see it?`)
   }
 
   async packaged() {

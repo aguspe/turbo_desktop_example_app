@@ -7,7 +7,7 @@ class ChecksTest < ActionDispatch::IntegrationTest
   # One per scenario that no automated test can reach, because it involves
   # the operating system itself.
   SCENARIOS = %w[
-    shell notification badge menu-item shortcut clipboard
+    shell notification badge menu-item shortcut clipboard inspector devtools
     drop file-open deep-link modal external-link
     focus window-size quit packaged
   ].freeze

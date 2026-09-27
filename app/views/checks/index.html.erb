@@ -25,7 +25,7 @@
   <% end %>
 
   <p class="check-intro">
-    Fifteen scenarios that no automated test can reach, because they involve the operating
+    Seventeen scenarios that no automated test can reach, because they involve the operating
     system itself. Each says what to do and what to expect, and marks itself when the app
     sees it happen. The ones you judge by eye have a button for what you saw.
   </p>
@@ -80,6 +80,22 @@
         steps: [ "Press Run.", "Paste into any other application." ],
         expect: "The text written is read back, and pastes elsewhere as \"Turbo Desktop check\"." do %>
     <button class="btn btn-sm btn-secondary" data-action="checks#clipboard">Run</button>
+  <% end %>
+
+  <%= render "check", id: "inspector", title: "The Dev Inspector",
+        steps: [ "Press Check.",
+                 "Press Cmd/Ctrl+Shift+D.",
+                 "Press a few of the buttons above with it open." ],
+        expect: "A panel at the bottom right, listing the bridge components and logging each message as it is sent." do %>
+    <button class="btn btn-sm btn-secondary" data-action="checks#inspector">Check</button>
+    <%= render "verdict", id: "inspector" %>
+  <% end %>
+
+  <%= render "check", id: "devtools", title: "The developer tools",
+        steps: [ "Press Toggle, or choose View, Developer Tools.", "Press it again." ],
+        expect: "The web inspector opens, then closes. In the built app, this card says they are not available." do %>
+    <button class="btn btn-sm btn-secondary" data-action="checks#devtools">Toggle</button>
+    <%= render "verdict", id: "devtools" %>
   <% end %>
 
   <h2 class="check-group">Files</h2>
