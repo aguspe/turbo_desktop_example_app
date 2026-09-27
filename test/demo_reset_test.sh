@@ -21,7 +21,9 @@ status=$?
 after="$(cksum < "$ROOT/db/development.sqlite3" 2>/dev/null || echo none)"
 
 [ "$status" -eq 1 ] || fail "expected exit 1 while the port is busy, got $status"
-echo "$output" | grep -q "Quit the app first" || fail "expected a message saying to quit the app, got: $output"
+echo "$output" | grep -q "port $PORT is held by" || fail "expected the message to name the port, got: $output"
+# The holder is not always this app. Naming it is what lets the reader tell.
+echo "$output" | grep -q "pid $listener" || fail "expected the message to name pid $listener, got: $output"
 [ "$before" = "$after" ] || fail "the database changed although the reset was refused"
 
 [ "$failures" -eq 0 ] && echo "PASS: demo-reset refuses while the app is running"

@@ -6,8 +6,13 @@ cd "$(dirname "$0")/.."
 
 PORT="${PORT:-3000}"
 
-if lsof -nP -t -iTCP:"$PORT" -sTCP:LISTEN >/dev/null 2>&1; then
-  echo "demo-reset: something is listening on port $PORT. Quit the app first." >&2
+# lsof exits non-zero when nothing is listening, which is the answer we want.
+holder="$({ lsof -nP -t -iTCP:"$PORT" -sTCP:LISTEN 2>/dev/null || true; } | head -n 1)"
+
+if [ -n "$holder" ]; then
+  name="$(basename "$(ps -p "$holder" -o comm= 2>/dev/null)")"
+  echo "demo-reset: port $PORT is held by ${name:-another process} (pid $holder)." >&2
+  echo "If that is this app, quit it first. The database is not reset while a server may be using it." >&2
   exit 1
 fi
 
