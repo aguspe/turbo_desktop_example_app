@@ -42,6 +42,16 @@ class SmokeTest < ActionDispatch::IntegrationTest
     assert_includes response.body, "Record the demo"
   end
 
+  test "completing a task declares a notification the shell can find" do
+    Task.create!(title: "Record the demo", priority: "high")
+
+    get tasks_path, headers: DESKTOP
+
+    assert_select "button[data-turbo-desktop-bridge='notification']" \
+                  "[data-turbo-desktop-bridge-title='Task completed']" \
+                  "[data-turbo-desktop-bridge-body='Record the demo']", 1
+  end
+
   test "forms are routed to a modal" do
     get "/turbo-desktop/path-configuration.json"
 
