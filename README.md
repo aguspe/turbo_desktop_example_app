@@ -39,7 +39,7 @@ Creating a new task opens in a native modal window, configured via path configur
 
 ## Prerequisites
 
-- **Ruby** >= 3.2
+- **Ruby** 3.4.1 (see `.ruby-version`; the locked gems need 3.3 or later)
 - **Node.js** >= 18
 - **Rust** — install from [rustup.rs](https://rustup.rs)
 - **Tauri CLI** — `cargo install tauri-cli`
