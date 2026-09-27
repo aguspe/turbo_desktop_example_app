@@ -39,45 +39,46 @@ Creating a new task opens in a native modal window, configured via path configur
 
 ## Prerequisites
 
-- **Ruby** >= 3.1.0
-- **Rails** >= 7.0
+- **Ruby** >= 3.2
 - **Node.js** >= 18
-- **Rust** (for Tauri) — install from [rustup.rs](https://rustup.rs)
+- **Rust** — install from [rustup.rs](https://rustup.rs)
+- **Tauri CLI** — `cargo install tauri-cli`
 
 ## Setup
-
-### 1. Clone and install
 
 ```bash
 git clone https://github.com/aguspe/turbo_desktop_example_app.git
 cd turbo_desktop_example_app
 bundle install
-rails db:create db:migrate db:seed
+bin/rails db:prepare
 ```
 
-### 2. Install the Turbo Desktop shell
+## Run
 
 ```bash
-# Install Tauri CLI
-cargo install tauri-cli
-
-# The desktop shell files are in the desktop/ directory
-cd desktop
-npm install
-```
-
-### 3. Run in development
-
-```bash
-# Terminal 1: Start the Rails server
-bin/rails server
-
-# Terminal 2: Start the Turbo Desktop shell
 cd desktop
 cargo tauri dev
 ```
 
-The desktop app will open and load your Rails app at `http://localhost:3000`.
+The first run compiles the shell, which takes a few minutes. The app then opens
+and starts the Rails server for you on `http://localhost:3000`; quitting the app
+stops it. If you already have a server on that port, the app uses yours and
+leaves it running.
+
+The shell in `desktop/` was generated with `npx turbo-desktop init` and is
+complete: this repository runs on its own, with nothing else checked out.
+
+To put the sample data back:
+
+```bash
+bin/demo-reset
+```
+
+## Tests
+
+```bash
+bin/rails test
+```
 
 ## Project Structure
 
@@ -114,8 +115,11 @@ turbo_desktop_example_app/
 │   │   └── 001_create_tasks.rb        # Tasks table
 │   └── seeds.rb                       # Sample data
 ├── desktop/                           # Turbo Desktop shell (Tauri)
-│   ├── turbo-desktop.config.json      # Desktop app configuration
-│   └── package.json
+│   ├── turbo-desktop.config.json      # Server URL, window, permissions
+│   ├── path-configuration.json        # Rules used before the server answers
+│   ├── src/                           # Bridge and the offline page
+│   └── src-tauri/                     # The native shell
+├── test/                              # Smoke tests
 ├── Gemfile
 └── README.md
 ```

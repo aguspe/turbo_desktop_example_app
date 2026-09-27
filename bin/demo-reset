@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+# Put the database back to the seeded state, so every take of a recording
+# starts from the same first frame.
+set -euo pipefail
+cd "$(dirname "$0")/.."
+
+PORT="${PORT:-3000}"
+
+if lsof -nP -t -iTCP:"$PORT" -sTCP:LISTEN >/dev/null 2>&1; then
+  echo "demo-reset: something is listening on port $PORT. Quit the app first." >&2
+  exit 1
+fi
+
+bin/rails db:reset

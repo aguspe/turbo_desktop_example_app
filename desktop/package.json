@@ -1,12 +1,17 @@
 {
-  "name": "turbo-desktop-example",
+  "name": "task-manager-desktop",
   "version": "0.1.0",
-  "description": "Desktop shell for the Turbo Desktop example Task Manager app",
+  "private": true,
+  "type": "module",
   "scripts": {
-    "dev": "cargo tauri dev",
-    "build": "cargo tauri build"
+    "dev": "turbo-desktop dev",
+    "build": "turbo-desktop build",
+    "tauri": "tauri"
   },
   "dependencies": {
-    "turbo-desktop": "file:../.."
+    "turbo-desktop": "^0.2.2"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2.0.0"
   }
 }
