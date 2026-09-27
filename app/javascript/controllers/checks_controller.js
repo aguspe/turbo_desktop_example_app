@@ -32,7 +32,9 @@ export default class extends Controller {
     this.tally()
 
     // /checks?auto=1 runs what needs nobody, for a run nobody is watching.
-    if (new URLSearchParams(window.location.search).get("auto") === "1") this.runAll()
+    const auto = new URLSearchParams(window.location.search).get("auto")
+    if (auto === "1") this.runAll()
+    if (auto === "confirm") this.ask()
   }
 
   disconnect() {
@@ -199,6 +201,25 @@ export default class extends Controller {
     } else {
       this.mark("packaged", "running", "This is a development build. Run bin/demo-package and open the app it builds.")
     }
+  }
+
+  async ask() {
+    if (!this.present("confirm")) return
+
+    this.mark("confirm", "running", "Asking. Answer the dialog.")
+    const deleted = await this.shell.confirm("Delete this task? (Nothing will be deleted.)", {
+      title: "Desktop checks",
+      confirm: "Delete",
+      cancel: "Keep",
+    })
+
+    this.answers = { ...(this.answers || {}), [deleted ? "Delete" : "Keep"]: true }
+    const both = this.answers.Delete && this.answers.Keep
+    this.mark(
+      "confirm",
+      both ? "pass" : "running",
+      `You chose ${deleted ? "Delete" : "Keep"}.` + (both ? " Both answers seen." : " Ask again and choose the other.")
+    )
   }
 
   // ─── Files by way of a dialog ───────────────────────────────────────────

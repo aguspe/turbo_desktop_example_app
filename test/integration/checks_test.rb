@@ -8,7 +8,7 @@ class ChecksTest < ActionDispatch::IntegrationTest
   # the operating system itself.
   SCENARIOS = %w[
     shell notification badge menu-item shortcut clipboard inspector devtools
-    file-picker export
+    file-picker export confirm
     drop file-open deep-link modal external-link
     focus window-size quit packaged
   ].freeze
