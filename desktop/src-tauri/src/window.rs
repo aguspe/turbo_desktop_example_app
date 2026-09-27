@@ -435,7 +435,7 @@ mod tests {
     use super::*;
 
     fn scratch(name: &str) -> PathBuf {
-        let dir = std::env::temp_dir().join(format!("turbo-desktop-config-{name}"));
+        let dir = crate::test_temp_dir().join(format!("turbo-desktop-config-{name}"));
         std::fs::remove_dir_all(&dir).ok();
         std::fs::create_dir_all(&dir).unwrap();
         dir
@@ -765,9 +765,16 @@ pub fn apply_shell_defaults<'a, M: tauri::Manager<tauri::Wry>>(
         serde_json::to_string(label).unwrap_or_else(|_| "null".into()),
     );
 
+    // The bridge itself, before anything the page loads. Injected once the
+    // page had finished loading, it arrived after the page's own scripts had
+    // run: a Stimulus controller that used TurboDesktop in connect() found
+    // nothing there on the first page of every window.
+    let bridge = include_str!("../../src/turbo-desktop.js");
+
     builder
         .user_agent(&config.user_agent)
         .initialization_script(&globals)
+        .initialization_script(bridge)
         .on_navigation(move |url| {
             match crate::security::destination_for(&navigation_server, &navigation_hosts, url) {
                 crate::security::LinkDestination::App => true,
@@ -852,5 +859,8 @@ pub async fn get_window_info(
         "isMaximized": is_maximized,
         "platform": std::env::consts::OS,
         "arch": std::env::consts::ARCH,
+        // False in an app built for release, which reads its configuration
+        // from inside its own bundle and nowhere else.
+        "development": cfg!(debug_assertions),
     }))
 }
