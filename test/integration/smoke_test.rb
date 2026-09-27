@@ -8,6 +8,12 @@ class SmokeTest < ActionDispatch::IntegrationTest
     assert_operator Gem::Version.new(TurboDesktop::VERSION), :>=, Gem::Version.new("0.2.2")
   end
 
+  test "the health check answers, so a launcher can tell the server is up" do
+    get "/up"
+
+    assert_response :success
+  end
+
   test "the dashboard renders" do
     get root_path, headers: BROWSER
 
