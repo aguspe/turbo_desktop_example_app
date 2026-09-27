@@ -25,7 +25,7 @@
   <% end %>
 
   <p class="check-intro">
-    Seventeen scenarios that no automated test can reach, because they involve the operating
+    Nineteen scenarios that no automated test can reach, because they involve the operating
     system itself. Each says what to do and what to expect, and marks itself when the app
     sees it happen. The ones you judge by eye have a button for what you saw.
   </p>
@@ -39,10 +39,12 @@
   <% end %>
 
   <%= render "check", id: "notification", title: "A notification appears",
-        steps: [ "Press Send.",
+        steps: [ "Turn off any Focus mode (Do Not Disturb, Sleep): it keeps notifications out of the corner of the screen.",
+                 "Press Send.",
                  "The first time, the system asks whether the app may send notifications. Allow it.",
+                 "If nothing appears, click the clock in the menu bar: it will be in the notification centre.",
                  "Say whether you saw it." ],
-        expect: "A notification titled \"Task Manager\" in the corner of the screen and in the notification centre." do %>
+        expect: "A notification titled \"Task Manager\" in the corner of the screen, or in the notification centre under a Focus mode." do %>
     <button class="btn btn-sm btn-secondary" data-action="checks#notify">Send</button>
     <%= render "verdict", id: "notification" %>
   <% end %>
@@ -50,7 +52,8 @@
   <%= render "check", id: "badge", title: "The dock icon shows a count",
         steps: [ "Press Set to 3 and look at the app's icon in the dock or taskbar.",
                  "Press Clear and look again.",
-                 "Say whether you saw both." ],
+                 "Say whether you saw both.",
+                 "Elsewhere in the app the badge is the number of tasks still to do, and goes when there are none. It does not go because the app was clicked." ],
         expect: "A red 3 on the icon, then nothing." do %>
     <button class="btn btn-sm btn-secondary" data-action="checks#badge" data-count="3">Set to 3</button>
     <button class="btn btn-sm btn-secondary" data-action="checks#badge" data-count="0">Clear</button>
@@ -59,7 +62,8 @@
 
   <%= render "check", id: "menu-item", title: "A menu item the page added",
         steps: [ "Press Add.",
-                 "Open the Actions menu in the menu bar and choose \"Mark this check done\".",
+                 "Look at the right of the menu bar, after Window: there is now an Actions menu. It is only there once a page has added something to it.",
+                 "Open it and choose \"Mark this check done\".",
                  "Or press its shortcut, Cmd/Ctrl+Shift+M." ],
         expect: "An Actions menu with the item in it. Choosing it marks this card." do %>
     <button class="btn btn-sm btn-secondary" data-action="checks#addMenuItem">Add</button>
@@ -101,12 +105,33 @@
   <h2 class="check-group">Files</h2>
 
   <%= render "check", id: "drop", title: "A file dragged from the desktop",
-        steps: [ "Drag any file from the Finder or Explorer onto this window.",
+        dropzone: "Drop a file here",
+        dropzone_note: "From the Finder or Explorer. Anywhere on the window works; this is where to aim.",
+        steps: [ "Drag any file from the Finder or Explorer and let go over the box below.",
                  "Then drag a folder." ],
-        expect: "The window highlights as you drag over it. The file's real path appears here, with its size, read through the filesystem bridge." do %>
+        expect: "The box highlights as you drag over the window. The file's real path appears here, with its size, read through the filesystem bridge." do %>
+  <% end %>
+
+  <%= render "check", id: "file-picker", title: "A file chosen in a dialog",
+        steps: [ "Press Choose a file and pick any text file.",
+                 "Press Choose a folder and pick any folder.",
+                 "Press either again and cancel the dialog." ],
+        expect: "The system's own dialog. What you picked is read back here; cancelling is reported as cancelled, not as a failure." do %>
+    <button class="btn btn-sm btn-secondary" data-action="checks#chooseFile">Choose a file&hellip;</button>
+    <button class="btn btn-sm btn-secondary" data-action="checks#chooseFolder">Choose a folder&hellip;</button>
+  <% end %>
+
+  <%= render "check", id: "export", title: "A file saved where you say",
+        steps: [ "Press Export.",
+                 "The dialog opens on the name tasks.csv. Save it to the Desktop.",
+                 "Open it: in Numbers or Excel it is a table of the tasks." ],
+        expect: "A save dialog already named tasks.csv. The file is written where you said, and its path appears here." do %>
+    <button class="btn btn-sm btn-secondary" data-action="checks#exportTasks">Export&hellip;</button>
   <% end %>
 
   <%= render "check", id: "file-open", title: "A file opened with the app",
+        dropzone: "Open a .csv with the app",
+        dropzone_note: "Right-click a .csv in the Finder, Open With, Task Manager. Or drop one on the app's icon in the dock.",
         steps: [ "Build the app: bin/demo-package, then open the built app.",
                  "In the Finder, right-click a .csv file, Open With, Task Manager.",
                  "Quit the app and do it again, so the double-click is what starts it." ],

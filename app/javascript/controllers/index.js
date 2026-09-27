@@ -17,3 +17,6 @@ application.register("autostart", AutostartController)
 
 import ChecksController from "controllers/checks_controller"
 application.register("checks", ChecksController)
+
+import OriginController from "controllers/origin_controller"
+application.register("origin", OriginController)

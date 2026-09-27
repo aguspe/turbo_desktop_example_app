@@ -14,6 +14,14 @@
 
   <p class="check-expect"><strong>Expect:</strong> <%= expect %></p>
 
+  <%# Somewhere to put a file, for the scenarios that are about one. %>
+  <% if local_assigns[:dropzone] %>
+    <div class="check-dropzone">
+      <strong><%= dropzone %></strong>
+      <%= local_assigns[:dropzone_note] %>
+    </div>
+  <% end %>
+
   <div class="check-actions"><%= yield %></div>
   <p class="check-detail" data-role="detail"></p>
 </section>

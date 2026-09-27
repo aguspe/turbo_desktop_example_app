@@ -154,13 +154,28 @@ export default class extends Controller {
 
     // The shell loads it once the page has, so give it a moment.
     for (let tries = 0; tries < 20; tries++) {
-      if (document.querySelector("[data-turbo-desktop-inspector]")) {
-        return this.mark("inspector", "running", "Loaded. Press Cmd/Ctrl+Shift+D to open it.")
+      const panel = document.querySelector("[data-turbo-desktop-inspector]")
+      if (panel) {
+        const open = panel.style.display !== "none"
+        return this.mark(
+          "inspector",
+          "running",
+          open
+            ? "Loaded, and open: the panel at the bottom right. Is it logging what you press?"
+            : "Loaded, and closed. Press Cmd/Ctrl+Shift+D to open it, then Check again."
+        )
       }
       await new Promise((resolve) => setTimeout(resolve, 250))
     }
 
-    this.mark("inspector", "fail", this.shell._inspectorError || "It did not load.")
+    // Why not, as far as the page can tell.
+    const beside = Array.from(document.documentElement.children).map((el) => el.tagName.toLowerCase())
+    this.mark(
+      "inspector",
+      "fail",
+      `It did not load. Asked for: ${this.shell._inspectorWanted}. ` +
+        `Error: ${this.shell._inspectorError || "none"}. In the page: ${beside.join(", ")}.`
+    )
   }
 
   async devtools() {
@@ -183,6 +198,52 @@ export default class extends Controller {
       this.mark("packaged", "pass", "Running from a bundle, built for release.")
     } else {
       this.mark("packaged", "running", "This is a development build. Run bin/demo-package and open the app it builds.")
+    }
+  }
+
+  // ─── Files by way of a dialog ───────────────────────────────────────────
+
+  chooseFile() {
+    return this.choose("open", "Choose a file")
+  }
+
+  chooseFolder() {
+    return this.choose("open-folder", "Choose a folder")
+  }
+
+  async choose(event, title) {
+    const picked = await this.ask("file-picker", event, { title })
+    if (!picked) return
+
+    if (picked.status === "cancelled") {
+      return this.mark("file-picker", "running", "Cancelled, and reported as cancelled. Now pick something.")
+    }
+    if (picked.status !== "selected") return this.refused("file-picker", picked)
+
+    this.mark("file-picker", "pass", await this.describe([picked.path]))
+  }
+
+  async exportTasks() {
+    const picked = await this.ask("file-picker", "save", {
+      title: "Export tasks",
+      defaultName: "tasks.csv",
+      filters: [{ name: "CSV", extensions: ["csv"] }],
+    })
+    if (!picked) return
+
+    if (picked.status === "cancelled") {
+      return this.mark("export", "running", "Cancelled. Press Export again and save it somewhere.")
+    }
+    if (picked.status !== "selected") return this.refused("export", picked)
+
+    const csv = await (await fetch("/tasks.csv")).text()
+    const written = await this.shell.fs.write(picked.path, csv)
+
+    if (written && written.status === "ok") {
+      const rows = csv.trim().split("\n").length - 1
+      this.mark("export", "pass", `${rows} tasks written to ${picked.path}`)
+    } else {
+      this.mark("export", "fail", `Could not write ${picked.path}: ${written?.error || "no answer"}`)
     }
   }
 

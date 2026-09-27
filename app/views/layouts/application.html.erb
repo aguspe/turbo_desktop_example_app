@@ -30,18 +30,14 @@
         <% end %>
       </div>
 
-      <%# Desktop-only: show platform badge in the navbar %>
-      <%# turbo_desktop_only renders its block ONLY when the request
-          comes from the Turbo Desktop native shell %>
-      <%= turbo_desktop_only do %>
-        <span class="badge badge-desktop">
-          Desktop (<%= turbo_desktop_platform %>)
-        </span>
-      <% end %>
+      <%# Where the request came from: the desktop shell, and which, or a
+          browser. Opens to show the rest. %>
+      <%= render "shared/origin" %>
 
-      <%# Web-only: show a prompt to try the desktop app %>
-      <%= turbo_web_only do %>
-        <span class="badge badge-web">Web Browser</span>
+      <%# The dock icon's badge is the number of tasks still to do. The element
+          declares the component; the shell's script sets the badge from it. %>
+      <%= turbo_desktop_only do %>
+        <%= tag.span hidden: true, **turbo_desktop_bridge("badge", count: Task.pending.count) %>
       <% end %>
     </div>
   </nav>

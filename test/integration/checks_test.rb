@@ -8,6 +8,7 @@ class ChecksTest < ActionDispatch::IntegrationTest
   # the operating system itself.
   SCENARIOS = %w[
     shell notification badge menu-item shortcut clipboard inspector devtools
+    file-picker export
     drop file-open deep-link modal external-link
     focus window-size quit packaged
   ].freeze
@@ -28,6 +29,26 @@ class ChecksTest < ActionDispatch::IntegrationTest
       assert_select "[data-check='#{scenario}'] .check-steps li", { minimum: 1 }, "#{scenario} has no steps"
       assert_select "[data-check='#{scenario}'] .check-expect", 1, "#{scenario} does not say what to expect"
     end
+  end
+
+  test "each way of handing the app a file has a place to do it" do
+    get checks_path, headers: DESKTOP
+
+    assert_select "[data-check='drop'] .check-dropzone", 1
+    assert_select "[data-check='file-open'] .check-dropzone", 1
+    assert_select "[data-check='file-picker'] button", { minimum: 2 }
+  end
+
+  test "the card says where to find what it puts in the menu bar" do
+    get checks_path, headers: DESKTOP
+
+    assert_select "[data-check='menu-item'] .check-steps", /right of the menu bar/i
+  end
+
+  test "the card says a Focus mode hides notifications" do
+    get checks_path, headers: DESKTOP
+
+    assert_select "[data-check='notification'] .check-steps", /Focus/
   end
 
   test "a deep link is recognised when it lands" do
