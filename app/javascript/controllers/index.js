@@ -14,3 +14,6 @@ application.register("clipboard", ClipboardController)
 
 import AutostartController from "controllers/autostart_controller"
 application.register("autostart", AutostartController)
+
+import ChecksController from "controllers/checks_controller"
+application.register("checks", ChecksController)

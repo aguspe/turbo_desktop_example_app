@@ -48,7 +48,16 @@
         ]
       },
       "appimage": {}
-    }
+    },
+    "fileAssociations": [
+      {
+        "ext": [
+          "csv"
+        ],
+        "description": "Task list",
+        "role": "Viewer"
+      }
+    ]
   },
   "plugins": {
     "deep-link": {

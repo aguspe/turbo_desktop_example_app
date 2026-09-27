@@ -1,0 +1,19 @@
+<%# One scenario. `state` is set by the checks controller as things happen. %>
+<section class="check-card" data-check="<%= id %>" data-state="waiting"
+         data-arrived="<%= local_assigns[:arrived] ? "true" : "false" %>">
+  <header class="check-header">
+    <span class="check-state" data-role="state">Waiting</span>
+    <h3><%= title %></h3>
+  </header>
+
+  <ol class="check-steps">
+    <% steps.each do |step| %>
+      <li><%= step %></li>
+    <% end %>
+  </ol>
+
+  <p class="check-expect"><strong>Expect:</strong> <%= expect %></p>
+
+  <div class="check-actions"><%= yield %></div>
+  <p class="check-detail" data-role="detail"></p>
+</section>
