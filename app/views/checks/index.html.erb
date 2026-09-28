@@ -165,7 +165,7 @@
                  "Press Ask again, and answer Delete.",
                  "Then, on the Tasks page, delete a task: it asks the same way." ],
         expect: "The system's own dialog, with the buttons Delete and Keep. This card says which you chose. Nothing is deleted here." do %>
-    <button class="btn btn-sm btn-secondary" data-action="checks#ask">Ask</button>
+    <button class="btn btn-sm btn-secondary" data-action="checks#question">Ask</button>
   <% end %>
 
   <%= render "check", id: "external-link", title: "A link to somewhere else",

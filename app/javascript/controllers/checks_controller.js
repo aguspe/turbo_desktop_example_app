@@ -34,7 +34,7 @@ export default class extends Controller {
     // /checks?auto=1 runs what needs nobody, for a run nobody is watching.
     const auto = new URLSearchParams(window.location.search).get("auto")
     if (auto === "1") this.runAll()
-    if (auto === "confirm") this.ask()
+    if (auto === "confirm") this.question()
   }
 
   disconnect() {
@@ -203,7 +203,7 @@ export default class extends Controller {
     }
   }
 
-  async ask() {
+  async question() {
     if (!this.present("confirm")) return
 
     this.mark("confirm", "running", "Asking. Answer the dialog.")
