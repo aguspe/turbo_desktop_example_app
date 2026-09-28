@@ -1,0 +1,219 @@
+<%# Scenarios that involve the operating system, to go through by hand.
+    Each card marks itself when the app sees the thing happen. %>
+<div class="checks"
+     data-controller="checks"
+     data-checks-deep-link-value="<%= @deep_link %>"
+     data-action="turbo-desktop:drop@document->checks#dropped
+                  turbo-desktop:drag-enter@document->checks#dragEntered
+                  turbo-desktop:drag-leave@document->checks#dragLeft
+                  turbo-desktop:file-open@document->checks#fileOpened
+                  turbo-desktop:focus@document->checks#cameBack">
+
+  <div class="section-header">
+    <h1>Desktop checks</h1>
+    <div class="section-actions">
+      <span class="check-tally" data-checks-target="tally"></span>
+      <button class="btn btn-primary" data-action="checks#runAll">Run the automatic ones</button>
+      <button class="btn btn-secondary" data-action="checks#startOver">Start over</button>
+    </div>
+  </div>
+
+  <%= turbo_web_only do %>
+    <div class="web-banner">
+      These scenarios need the desktop app. Open this page there, from the Checks link.
+    </div>
+  <% end %>
+
+  <p class="check-intro">
+    Twenty scenarios that no automated test can reach, because they involve the operating
+    system itself. Each says what to do and what to expect, and marks itself when the app
+    sees it happen. The ones you judge by eye have a button for what you saw.
+  </p>
+
+  <h2 class="check-group">The shell does these when asked</h2>
+
+  <%= render "check", id: "shell", title: "The app knows where it is running",
+        steps: [ "Press Run." ],
+        expect: "The shell's version, this platform, and the window's label." do %>
+    <button class="btn btn-sm btn-secondary" data-action="checks#whereAmI">Run</button>
+  <% end %>
+
+  <%= render "check", id: "notification", title: "A notification appears",
+        steps: [ "Turn off any Focus mode (Do Not Disturb, Sleep): it keeps notifications out of the corner of the screen.",
+                 "Press Send.",
+                 "The first time, the system asks whether the app may send notifications. Allow it.",
+                 "If nothing appears, click the clock in the menu bar: it will be in the notification centre.",
+                 "Say whether you saw it." ],
+        expect: "A notification titled \"Task Manager\" in the corner of the screen, or in the notification centre under a Focus mode." do %>
+    <button class="btn btn-sm btn-secondary" data-action="checks#notify">Send</button>
+    <%= render "verdict", id: "notification" %>
+  <% end %>
+
+  <%= render "check", id: "badge", title: "The dock icon shows a count",
+        steps: [ "Press Set to 3 and look at the app's icon in the dock or taskbar.",
+                 "Press Clear and look again.",
+                 "Say whether you saw both.",
+                 "Elsewhere in the app the badge is the number of tasks still to do, and goes when there are none. It does not go because the app was clicked." ],
+        expect: "A red 3 on the icon, then nothing." do %>
+    <button class="btn btn-sm btn-secondary" data-action="checks#badge" data-count="3">Set to 3</button>
+    <button class="btn btn-sm btn-secondary" data-action="checks#badge" data-count="0">Clear</button>
+    <%= render "verdict", id: "badge" %>
+  <% end %>
+
+  <%= render "check", id: "menu-item", title: "A menu item the page added",
+        steps: [ "Press Add.",
+                 "Look at the right of the menu bar, after Window: there is now an Actions menu. It is only there once a page has added something to it.",
+                 "Open it and choose \"Mark this check done\".",
+                 "Or press its shortcut, Cmd/Ctrl+Shift+M." ],
+        expect: "An Actions menu with the item in it. Choosing it marks this card." do %>
+    <button class="btn btn-sm btn-secondary" data-action="checks#addMenuItem">Add</button>
+    <button class="btn btn-sm btn-secondary" data-action="checks#removeMenuItem">Remove</button>
+  <% end %>
+
+  <%= render "check", id: "shortcut", title: "A shortcut that works from anywhere",
+        steps: [ "Press Register.",
+                 "Switch to another application, so this one is in the background.",
+                 "Press Cmd/Ctrl+Shift+K.",
+                 "Come back." ],
+        expect: "This card is marked, although the app was not in front when you pressed it." do %>
+    <button class="btn btn-sm btn-secondary" data-action="checks#registerShortcut">Register</button>
+    <button class="btn btn-sm btn-secondary" data-action="checks#unregisterShortcut">Unregister</button>
+  <% end %>
+
+  <%= render "check", id: "clipboard", title: "The clipboard, without a click",
+        steps: [ "Press Run.", "Paste into any other application." ],
+        expect: "The text written is read back, and pastes elsewhere as \"Turbo Desktop check\"." do %>
+    <button class="btn btn-sm btn-secondary" data-action="checks#clipboard">Run</button>
+  <% end %>
+
+  <%= render "check", id: "inspector", title: "The Dev Inspector",
+        steps: [ "Press Check.",
+                 "Press Cmd/Ctrl+Shift+D.",
+                 "Press a few of the buttons above with it open." ],
+        expect: "A panel at the bottom right, listing the bridge components and logging each message as it is sent." do %>
+    <button class="btn btn-sm btn-secondary" data-action="checks#inspector">Check</button>
+    <%= render "verdict", id: "inspector" %>
+  <% end %>
+
+  <%= render "check", id: "devtools", title: "The developer tools",
+        steps: [ "Press Toggle, or choose View, Developer Tools.", "Press it again." ],
+        expect: "The web inspector opens, then closes. In the built app, this card says they are not available." do %>
+    <button class="btn btn-sm btn-secondary" data-action="checks#devtools">Toggle</button>
+    <%= render "verdict", id: "devtools" %>
+  <% end %>
+
+  <h2 class="check-group">Files</h2>
+
+  <%= render "check", id: "drop", title: "A file dragged from the desktop",
+        dropzone: "Drop a file here",
+        dropzone_note: "From the Finder or Explorer. Anywhere on the window works; this is where to aim.",
+        steps: [ "Drag any file from the Finder or Explorer and let go over the box below.",
+                 "Then drag a folder." ],
+        expect: "The box highlights as you drag over the window. The file's real path appears here, with its size, read through the filesystem bridge." do %>
+  <% end %>
+
+  <%= render "check", id: "file-picker", title: "A file chosen in a dialog",
+        steps: [ "Press Choose a file and pick any text file.",
+                 "Press Choose a folder and pick any folder.",
+                 "Press either again and cancel the dialog." ],
+        expect: "The system's own dialog. What you picked is read back here; cancelling is reported as cancelled, not as a failure." do %>
+    <button class="btn btn-sm btn-secondary" data-action="checks#chooseFile">Choose a file&hellip;</button>
+    <button class="btn btn-sm btn-secondary" data-action="checks#chooseFolder">Choose a folder&hellip;</button>
+  <% end %>
+
+  <%= render "check", id: "export", title: "A file saved where you say",
+        steps: [ "Press Export.",
+                 "The dialog opens on the name tasks.csv. Save it to the Desktop.",
+                 "Open it: in Numbers or Excel it is a table of the tasks." ],
+        expect: "A save dialog already named tasks.csv. The file is written where you said, and its path appears here." do %>
+    <button class="btn btn-sm btn-secondary" data-action="checks#exportTasks">Export&hellip;</button>
+  <% end %>
+
+  <%= render "check", id: "file-open", title: "A file opened with the app",
+        dropzone: "Open a .csv with the app",
+        dropzone_note: "Right-click a .csv in the Finder, Open With, Task Manager. Or drop one on the app's icon in the dock.",
+        steps: [ "Build the app: bin/demo-package, then open the built app.",
+                 "In the Finder, right-click a .csv file, Open With, Task Manager.",
+                 "Quit the app and do it again, so the double-click is what starts it." ],
+        expect: "The app comes forward with the file's path here, both times. Its tasks are imported." do %>
+  <% end %>
+
+  <h2 class="check-group">Links and windows</h2>
+
+
+  <%= render "check", id: "deep-link", title: "A link from outside the app",
+        arrived: @arrived_by_deep_link,
+        steps: [ "Build the app: bin/demo-package. Quit this one, and open the built one.",
+                 "Press Copy, and run what it copied in a terminal.",
+                 "On Windows, paste the link itself into the Run dialog.",
+                 "Quit the built app, and run it again: the link starts the app." ],
+        expect: "The built app comes forward on this page, scrolled to this card, which is marked. No second copy of it opens." do %>
+    <button class="btn btn-sm btn-secondary" data-action="checks#copyDeepLink">Copy</button>
+    <code class="check-code"><%= "open \"#{@deep_link}\"" %></code>
+    <p class="check-aside">
+      The system sends a link to the app that has claimed its scheme, and only a built app
+      can claim one. The app started with <code>bin/demo-tasks</code> is a development build,
+      which to the system is a different program: run the link while it is open and the
+      built app opens beside it. That is two programs, not two copies of one.
+    </p>
+  <% end %>
+
+  <%= render "check", id: "modal", title: "A form in a window of its own",
+        steps: [ "Press New task.",
+                 "Look at this window behind the one that opened.",
+                 "Save the task, or close the window." ],
+        expect: "A separate, smaller window with the form. This window stays on this page, and is still here when the other one closes." do %>
+    <%= link_to "New task", new_task_path, class: "btn btn-sm btn-secondary", data: { action: "checks#modalOpened" } %>
+    <%= render "verdict", id: "modal" %>
+  <% end %>
+
+  <%= render "check", id: "confirm", title: "A question before something is done",
+        steps: [ "Press Ask, and answer Keep.",
+                 "Press Ask again, and answer Delete.",
+                 "Then, on the Tasks page, delete a task: it asks the same way." ],
+        expect: "The system's own dialog, with the buttons Delete and Keep. This card says which you chose. Nothing is deleted here." do %>
+    <button class="btn btn-sm btn-secondary" data-action="checks#question">Ask</button>
+  <% end %>
+
+  <%= render "check", id: "external-link", title: "A link to somewhere else",
+        steps: [ "Press the link." ],
+        expect: "It opens in your browser. This window stays where it is." do %>
+    <a class="btn btn-sm btn-secondary" href="https://turbo-desktop.dev/" data-action="checks#externalFollowed">turbo-desktop.dev</a>
+    <%= render "verdict", id: "external-link" %>
+  <% end %>
+
+  <%= render "check", id: "focus", title: "Coming back to the app",
+        steps: [ "Switch to another application for a few seconds.", "Come back." ],
+        expect: "How long you were away, in seconds." do %>
+  <% end %>
+
+  <h2 class="check-group">Opening and closing</h2>
+
+  <%= render "check", id: "window-size", title: "The window opens at the size you left it",
+        steps: [ "Resize the window to something you will recognise.",
+                 "Quit the app and open it again.",
+                 "Come back to this page." ],
+        expect: "The size from last time and the size now are the same." do %>
+    <button class="btn btn-sm btn-secondary" data-action="checks#rememberSize">Note the size now</button>
+  <% end %>
+
+  <%= render "check", id: "quit", title: "Quitting stops the server",
+        steps: [ "Start the app with nothing running on its port, so that it starts the server.",
+                 "Quit with Cmd+Q, or Alt+F4 on Windows.",
+                 "In a terminal: lsof -nP -iTCP:3000 -sTCP:LISTEN (Windows: netstat -ano | findstr :3000)",
+                 "Open the app again and say what you saw." ],
+        expect: "Nothing is listening after the app has quit." do %>
+    <%= render "verdict", id: "quit" %>
+  <% end %>
+
+  <%= render "check", id: "packaged", title: "The built app",
+        steps: [ "Run bin/demo-package. It prints where the app is.",
+                 "Quit this one, and open the built one from the Finder.",
+                 "Come back to this page in it." ],
+        expect: "The app opens and starts its server on its own. This card says it is running from a bundle." do %>
+    <button class="btn btn-sm btn-secondary" data-action="checks#packaged">Check</button>
+  <% end %>
+
+  <h2 class="check-group">What happened</h2>
+  <pre class="check-log" data-checks-target="log" aria-live="polite"></pre>
+</div>

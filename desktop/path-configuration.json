@@ -1,0 +1,24 @@
+{
+  "settings": {
+    "screenshots_enabled": false
+  },
+  "rules": [
+    {
+      "patterns": [
+        "/"
+      ],
+      "properties": {
+        "presentation": "default"
+      }
+    },
+    {
+      "patterns": [
+        "/new$",
+        "/edit$"
+      ],
+      "properties": {
+        "presentation": "modal"
+      }
+    }
+  ]
+}

@@ -22,6 +22,13 @@ the Dev Inspector. It's enabled here via `config.inspector_enabled` in
 
 ## Screenshots
 
+### On macOS, Windows and Linux
+The same Rails app in the three shells. The badge in the corner is what Rails was told about the one it is in.
+
+| macOS | Windows | Linux |
+|---|---|---|
+| ![macOS](docs/screenshots/macos.png) | ![Windows](docs/screenshots/windows.png) | ![Linux](docs/screenshots/linux.png) |
+
 ### Dashboard
 The dashboard shows task statistics, a "Desktop Features Active" banner (only visible in the native app), and recent tasks. The `turbo_desktop_only` helper controls what's shown in the desktop shell vs a regular browser.
 
@@ -39,45 +46,63 @@ Creating a new task opens in a native modal window, configured via path configur
 
 ## Prerequisites
 
-- **Ruby** >= 3.1.0
-- **Rails** >= 7.0
+- **Ruby** 3.4.1 (see `.ruby-version`; the locked gems need 3.3 or later)
 - **Node.js** >= 18
-- **Rust** (for Tauri) — install from [rustup.rs](https://rustup.rs)
+- **Rust** — install from [rustup.rs](https://rustup.rs)
+- **Tauri CLI** — `cargo install tauri-cli`
 
 ## Setup
-
-### 1. Clone and install
 
 ```bash
 git clone https://github.com/aguspe/turbo_desktop_example_app.git
 cd turbo_desktop_example_app
 bundle install
-rails db:create db:migrate db:seed
+bin/rails db:prepare
 ```
 
-### 2. Install the Turbo Desktop shell
+## Run
 
 ```bash
-# Install Tauri CLI
-cargo install tauri-cli
-
-# The desktop shell files are in the desktop/ directory
-cd desktop
-npm install
-```
-
-### 3. Run in development
-
-```bash
-# Terminal 1: Start the Rails server
-bin/rails server
-
-# Terminal 2: Start the Turbo Desktop shell
 cd desktop
 cargo tauri dev
 ```
 
-The desktop app will open and load your Rails app at `http://localhost:3000`.
+The first run compiles the shell, which takes a few minutes. The app then opens
+and starts the Rails server for you on `http://localhost:3000`; quitting the app
+stops it. If you already have a server on that port, the app uses yours and
+leaves it running.
+
+The shell in `desktop/` was generated with `npx turbo-desktop init` and is
+complete: this repository runs on its own, with nothing else checked out.
+
+On Windows, set `server.command` in `desktop/turbo-desktop.config.json` to
+`ruby bin\rails server`: the `bin/rails` binstub is a Unix script.
+
+To put the sample data back:
+
+```bash
+bin/demo-reset
+```
+
+## Checking by hand
+
+What no automated test can reach is laid out as a page. Open the app and
+choose **Checks** in its navigation, which is there in the desktop app only.
+Twenty scenarios, each saying what to do and what to expect, and each marking
+itself when the app sees the thing happen. The results are kept across
+restarts, in `tmp/desktop-checks.json`.
+
+A few of them need the app built as it would be shipped:
+
+```bash
+bin/demo-package
+```
+
+## Tests
+
+```bash
+bin/rails test
+```
 
 ## Project Structure
 
@@ -114,8 +139,11 @@ turbo_desktop_example_app/
 │   │   └── 001_create_tasks.rb        # Tasks table
 │   └── seeds.rb                       # Sample data
 ├── desktop/                           # Turbo Desktop shell (Tauri)
-│   ├── turbo-desktop.config.json      # Desktop app configuration
-│   └── package.json
+│   ├── turbo-desktop.config.json      # Server URL, window, permissions
+│   ├── path-configuration.json        # Rules used before the server answers
+│   ├── src/                           # Bridge and the offline page
+│   └── src-tauri/                     # The native shell
+├── test/                              # Smoke tests
 ├── Gemfile
 └── README.md
 ```

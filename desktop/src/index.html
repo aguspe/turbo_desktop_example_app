@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Turbo Desktop</title>
+  </head>
+  <body>
+    <!--
+      The shell opens the main window straight at your app, or at error.html when
+      it cannot be reached, so this page is not normally shown. It exists because
+      Tauri expects an entry point in the frontend directory, and it forwards to
+      the error page so that landing here is never a dead end.
+    -->
+    <script>
+      window.location.replace("error.html");
+    </script>
+  </body>
+</html>

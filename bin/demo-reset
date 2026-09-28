@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+# Put the database back to the seeded state, so every take of a recording
+# starts from the same first frame.
+set -euo pipefail
+cd "$(dirname "$0")/.."
+
+PORT="${PORT:-3000}"
+
+# lsof exits non-zero when nothing is listening, which is the answer we want.
+holder="$({ lsof -nP -t -iTCP:"$PORT" -sTCP:LISTEN 2>/dev/null || true; } | head -n 1)"
+
+if [ -n "$holder" ]; then
+  # ucomm, not comm: servers like puma rewrite their own title.
+  name="$(ps -p "$holder" -o ucomm= 2>/dev/null | xargs)"
+  echo "demo-reset: port $PORT is held by ${name:-another process} (pid $holder)." >&2
+  echo "If that is this app, quit it first. The database is not reset while a server may be using it." >&2
+  exit 1
+fi
+
+bin/rails db:reset

@@ -1,0 +1,34 @@
+{
+  "identifier": "main-capability",
+  "description": "Main window capabilities for Turbo Desktop. The remote URL list has to stay broad because the app server is chosen at runtime in turbo-desktop.config.json; the real caller check lives in src/security.rs (is_trusted_origin) and runs on every bridge message.",
+  "windows": ["main", "modal-*", "window-*"],
+  "remote": {
+    "urls": ["http://localhost:*", "https://*"]
+  },
+  "permissions": [
+    "allow-handle-visit-proposal",
+    "allow-update-window-title",
+    "allow-page-loaded",
+    "allow-page-loading",
+    "allow-close-modal",
+    "allow-dismiss-modal",
+    "allow-handle-bridge-message",
+    "allow-send-bridge-response",
+    "allow-retry-connection",
+    "allow-get-window-info",
+    "core:default",
+    "core:window:default",
+    "core:window:allow-set-title",
+    "core:window:allow-close",
+    "core:window:allow-create",
+    "core:window:allow-inner-size",
+    "core:window:allow-outer-position",
+    "core:window:allow-scale-factor",
+    "core:window:allow-is-fullscreen",
+    "core:window:allow-is-maximized",
+    "shell:allow-open",
+    "notification:default",
+    "dialog:default",
+    "updater:default"
+  ]
+}

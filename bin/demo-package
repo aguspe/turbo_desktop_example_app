@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+# Build the app the way it would be shipped, so the scenarios that need a real
+# bundle can be gone through: opening a file with the app, a deep link from
+# outside, reading the configuration from inside the bundle.
+#
+# A shipped app reads its configuration only from its own bundle, where ".."
+# is no longer this project. So the bundle is built with the project's full
+# path in it, and the file is put back as it was afterwards. The app that
+# comes out runs on this machine only, which is all a check needs.
+set -euo pipefail
+cd "$(dirname "$0")/.."
+
+PROJECT="$(pwd)"
+CONFIG="desktop/turbo-desktop.config.json"
+KEPT="$(mktemp)"
+
+cp "$CONFIG" "$KEPT"
+trap 'cp "$KEPT" "$CONFIG"; rm -f "$KEPT"' EXIT
+
+node --input-type=module -e '
+import { readFileSync, writeFileSync } from "node:fs";
+const [path, project] = process.argv.slice(1);
+const config = JSON.parse(readFileSync(path, "utf-8"));
+config.server = { ...config.server, directory: project };
+writeFileSync(path, JSON.stringify(config, null, 2) + "\n");
+' "$CONFIG" "$PROJECT"
+
+echo "demo-package: building. The first time takes several minutes."
+(cd desktop && cargo tauri build "$@")
+
+echo
+echo "demo-package: built."
+find desktop/src-tauri/target -path "*release/bundle*" \( -name "*.app" -o -name "*.dmg" -o -name "*.msi" -o -name "*.exe" -o -name "*.AppImage" -o -name "*.deb" \) -maxdepth 6 2>/dev/null | sed "s|^|  $PROJECT/|"
+echo
+echo "Quit the development app first, then open the built one."

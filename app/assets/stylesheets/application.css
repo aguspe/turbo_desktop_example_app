@@ -447,3 +447,218 @@ body {
   outline-offset: 4px;
   background: rgba(37, 99, 235, 0.06);
 }
+
+
+/* ─── Desktop checks ─────────────────────────────────────────────────────── */
+
+.check-intro {
+  color: #6b7280;
+  margin: 0 0 1.5rem;
+  max-width: 46rem;
+}
+
+.check-group {
+  font-size: 0.8rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #6b7280;
+  margin: 2rem 0 0.75rem;
+}
+
+.check-tally {
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin-right: 0.5rem;
+}
+
+.check-card {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-left: 4px solid #d1d5db;
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+  margin-bottom: 0.75rem;
+}
+
+.check-card[data-state="running"] { border-left-color: #f59e0b; }
+.check-card[data-state="pass"] { border-left-color: #10b981; }
+.check-card[data-state="fail"] { border-left-color: #ef4444; }
+.check-card[data-state="unavailable"] { border-left-color: #9ca3af; }
+.check-card.drop-target { outline: 2px dashed #6366f1; outline-offset: 2px; }
+
+.check-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.check-header h3 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.check-state {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  background: #f3f4f6;
+  color: #4b5563;
+  white-space: nowrap;
+}
+
+.check-card[data-state="running"] .check-state { background: #fef3c7; color: #92400e; }
+.check-card[data-state="pass"] .check-state { background: #d1fae5; color: #065f46; }
+.check-card[data-state="fail"] .check-state { background: #fee2e2; color: #991b1b; }
+
+.check-steps {
+  margin: 0 0 0.5rem;
+  padding-left: 1.25rem;
+  font-size: 0.9rem;
+  color: #374151;
+}
+
+.check-expect {
+  margin: 0 0 0.75rem;
+  font-size: 0.875rem;
+  color: #4b5563;
+}
+
+.check-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.check-actions:empty { display: none; }
+
+.check-verdict {
+  display: inline-flex;
+  gap: 0.5rem;
+  margin-left: auto;
+}
+
+.check-code,
+.check-detail,
+.check-log {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.8rem;
+}
+
+.check-code {
+  background: #f3f4f6;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+}
+
+.check-detail {
+  margin: 0.75rem 0 0;
+  color: #374151;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.check-detail:empty { display: none; }
+
+.check-log {
+  background: #111827;
+  color: #d1d5db;
+  border-radius: 8px;
+  padding: 1rem;
+  min-height: 6rem;
+  max-height: 16rem;
+  overflow: auto;
+  white-space: pre-wrap;
+}
+
+
+/* ─── Where the request came from ────────────────────────────────────────── */
+
+.origin {
+  position: relative;
+}
+
+.origin summary {
+  cursor: pointer;
+  list-style: none;
+  white-space: nowrap;
+}
+
+.origin summary::-webkit-details-marker { display: none; }
+
+.origin-details {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 0.5rem);
+  z-index: 20;
+  width: 26rem;
+  max-width: 90vw;
+  margin: 0;
+  padding: 1rem 1.25rem;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+  display: grid;
+  grid-template-columns: 7rem 1fr;
+  gap: 0.4rem 1rem;
+  font-size: 0.8rem;
+}
+
+.origin-details dt {
+  color: #6b7280;
+}
+
+.origin-details dd {
+  margin: 0;
+  color: #111827;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  overflow-wrap: anywhere;
+}
+
+/* ─── Somewhere to put a file ────────────────────────────────────────────── */
+
+.check-dropzone {
+  border: 2px dashed #c7d2fe;
+  border-radius: 8px;
+  background: #eef2ff;
+  color: #4338ca;
+  padding: 1.5rem;
+  margin: 0 0 0.75rem;
+  text-align: center;
+  font-size: 0.9rem;
+}
+
+.check-dropzone strong {
+  display: block;
+  font-size: 1rem;
+  margin-bottom: 0.25rem;
+}
+
+.check-card.drop-target .check-dropzone,
+.check-dropzone.drop-target {
+  border-color: #4f46e5;
+  background: #e0e7ff;
+}
+
+.export-result {
+  margin: 0 0 1rem;
+}
+
+
+/* ─── A page in a modal ──────────────────────────────────────────────────── */
+
+body.in-modal main.container {
+  padding-top: 1.5rem;
+}
+
+.check-aside {
+  flex-basis: 100%;
+  margin: 0.5rem 0 0;
+  font-size: 0.85rem;
+  color: #6b7280;
+}

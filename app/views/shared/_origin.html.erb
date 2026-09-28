@@ -1,0 +1,22 @@
+<%# Where this request came from. The server knows what the shell told it in
+    its user agent; the window's own details are asked of the shell by the
+    origin controller, once it is there. %>
+<details class="origin" data-controller="origin">
+  <summary class="badge <%= turbo_desktop_app? ? "badge-desktop" : "badge-web" %>">
+    <%= origin_summary %>
+  </summary>
+
+  <dl class="origin-details">
+    <% origin_details.each do |what, which| %>
+      <dt><%= what %></dt>
+      <dd><%= which %></dd>
+    <% end %>
+
+    <%= turbo_desktop_only do %>
+      <dt>Window</dt>
+      <dd data-origin-target="window">Asking the shell&hellip;</dd>
+      <dt>Build</dt>
+      <dd data-origin-target="build">Asking the shell&hellip;</dd>
+    <% end %>
+  </dl>
+</details>

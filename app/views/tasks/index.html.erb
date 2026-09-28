@@ -50,22 +50,19 @@
           <%= link_to "Edit", edit_task_path(task), class: "btn btn-sm btn-secondary" %>
 
           <% unless task.completed? %>
-            <%# Mark as complete — triggers a native notification in the desktop app.
-                The data attributes are used by the notification bridge component. %>
+            <%# Mark as complete. In the desktop app a notification says so:
+                the button declares the component, and the shell's script
+                shows it when the button is pressed. %>
             <%= button_to "Complete", task_path(task),
                   method: :patch,
                   params: { task: { completed: true } },
                   class: "btn btn-sm btn-success",
-                  data: {
-                    # Bridge component data attributes for native notification
-                    # When this button is clicked, turbo-desktop.js picks up these
-                    # attributes and sends a bridge message to trigger a native
-                    # OS notification
-                    **turbo_desktop_bridge("notification",
-                      title: "Task Completed!",
-                      body: task.title
-                    )
-                  } %>
+                  # Among the button's own attributes, not inside data: { },
+                  # which would prefix the names a second time.
+                  **turbo_desktop_bridge("notification",
+                    title: "Task completed",
+                    body: task.title
+                  ) %>
           <% end %>
 
           <%= button_to "Delete", task_path(task),
