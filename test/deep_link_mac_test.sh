@@ -28,6 +28,7 @@ if [ -z "$APP" ]; then
   echo "No built app. Run bin/demo-package first."
   exit 2
 fi
+APP="$ROOT/$APP"
 echo "App: $APP"
 
 running() { pgrep -f "$APP/Contents/MacOS/" >/dev/null 2>&1; }
