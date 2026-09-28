@@ -303,9 +303,12 @@ export default class extends Controller {
   }
 
   arrivedByDeepLink() {
-    if (this.card("deep-link").dataset.arrived === "true") {
-      this.mark("deep-link", "pass", `Arrived by ${this.deepLinkValue}.`)
-    }
+    const card = this.card("deep-link")
+    if (card.dataset.arrived !== "true") return
+
+    this.mark("deep-link", "pass", `Arrived by ${this.deepLinkValue}.`)
+    // To the card the link was about, so that arriving is seen to have worked.
+    card.scrollIntoView({ block: "center" })
   }
 
   async copyDeepLink() {

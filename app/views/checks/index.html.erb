@@ -143,12 +143,19 @@
 
   <%= render "check", id: "deep-link", title: "A link from outside the app",
         arrived: @arrived_by_deep_link,
-        steps: [ "Build the app: bin/demo-package, and open the built app once, so the system learns its scheme.",
+        steps: [ "Build the app: bin/demo-package. Quit this one, and open the built one.",
                  "Press Copy, and run what it copied in a terminal.",
-                 "On Windows, paste the link itself into the Run dialog." ],
-        expect: "The app comes forward on this page, and this card is marked." do %>
+                 "On Windows, paste the link itself into the Run dialog.",
+                 "Quit the built app, and run it again: the link starts the app." ],
+        expect: "The built app comes forward on this page, scrolled to this card, which is marked. No second copy of it opens." do %>
     <button class="btn btn-sm btn-secondary" data-action="checks#copyDeepLink">Copy</button>
     <code class="check-code"><%= "open \"#{@deep_link}\"" %></code>
+    <p class="check-aside">
+      The system sends a link to the app that has claimed its scheme, and only a built app
+      can claim one. The app started with <code>bin/demo-tasks</code> is a development build,
+      which to the system is a different program: run the link while it is open and the
+      built app opens beside it. That is two programs, not two copies of one.
+    </p>
   <% end %>
 
   <%= render "check", id: "modal", title: "A form in a window of its own",

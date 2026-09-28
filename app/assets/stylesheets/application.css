@@ -648,3 +648,17 @@ body {
 .export-result {
   margin: 0 0 1rem;
 }
+
+
+/* ─── A page in a modal ──────────────────────────────────────────────────── */
+
+body.in-modal main.container {
+  padding-top: 1.5rem;
+}
+
+.check-aside {
+  flex-basis: 100%;
+  margin: 0.5rem 0 0;
+  font-size: 0.85rem;
+  color: #6b7280;
+}

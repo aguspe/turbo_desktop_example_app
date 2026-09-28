@@ -12,6 +12,16 @@ module OriginHelper
     PLATFORMS.fetch(turbo_desktop_platform.to_s, turbo_desktop_platform.to_s.presence || "Unknown")
   end
 
+  # Whether this page is being shown in a modal window. The gem knows from
+  # the path configuration; a form sent back with its mistakes is rendered
+  # at the address it was posted to, which no rule names, and is still in
+  # the modal it was opened in.
+  def in_a_modal?
+    return false unless turbo_desktop_app?
+
+    turbo_desktop_modal? || %w[create update].include?(action_name)
+  end
+
   # What the badge says at a glance.
   def origin_summary
     return "Web browser" unless turbo_desktop_app?

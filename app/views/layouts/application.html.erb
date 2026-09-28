@@ -12,7 +12,10 @@
       the gem-served inspector assets. No-op in production / plain browsers. %>
   <%= turbo_desktop_inspector_meta_tag %>
 </head>
-<body>
+<%# A page shown in a modal has a window of its own around it: the
+    navigation and the footer belong to the main window. %>
+<body class="<%= "in-modal" if in_a_modal? %>">
+  <% unless in_a_modal? %>
   <nav class="navbar">
     <div class="container">
       <div class="navbar-brand">
@@ -41,6 +44,7 @@
       <% end %>
     </div>
   </nav>
+  <% end %>
 
   <main class="container">
     <% if notice.present? %>
@@ -53,6 +57,7 @@
     <%= yield %>
   </main>
 
+  <% unless in_a_modal? %>
   <footer class="container footer">
     <p>
       Built with
@@ -61,5 +66,6 @@
       <a href="https://tauri.app">Tauri</a>.
     </p>
   </footer>
+  <% end %>
 </body>
 </html>
