@@ -30,3 +30,6 @@ gem "bootsnap", require: false
 group :development do
   gem "web-console"
 end
+
+# Windows has no time zone database of its own
+gem "tzinfo-data", platforms: %i[windows jruby]

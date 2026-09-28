@@ -22,6 +22,13 @@ the Dev Inspector. It's enabled here via `config.inspector_enabled` in
 
 ## Screenshots
 
+### On macOS, Windows and Linux
+The same Rails app in the three shells. The badge in the corner is what Rails was told about the one it is in.
+
+| macOS | Windows | Linux |
+|---|---|---|
+| ![macOS](docs/screenshots/macos.png) | ![Windows](docs/screenshots/windows.png) | ![Linux](docs/screenshots/linux.png) |
+
 ### Dashboard
 The dashboard shows task statistics, a "Desktop Features Active" banner (only visible in the native app), and recent tasks. The `turbo_desktop_only` helper controls what's shown in the desktop shell vs a regular browser.
 
@@ -68,10 +75,27 @@ leaves it running.
 The shell in `desktop/` was generated with `npx turbo-desktop init` and is
 complete: this repository runs on its own, with nothing else checked out.
 
+On Windows, set `server.command` in `desktop/turbo-desktop.config.json` to
+`ruby bin\rails server`: the `bin/rails` binstub is a Unix script.
+
 To put the sample data back:
 
 ```bash
 bin/demo-reset
+```
+
+## Checking by hand
+
+What no automated test can reach is laid out as a page. Open the app and
+choose **Checks** in its navigation, which is there in the desktop app only.
+Twenty scenarios, each saying what to do and what to expect, and each marking
+itself when the app sees the thing happen. The results are kept across
+restarts, in `tmp/desktop-checks.json`.
+
+A few of them need the app built as it would be shipped:
+
+```bash
+bin/demo-package
 ```
 
 ## Tests

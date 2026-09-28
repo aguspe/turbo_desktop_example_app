@@ -196,6 +196,14 @@ pub fn handle_files(app: &tauri::AppHandle, paths: Vec<std::path::PathBuf>) {
     // yet misses the ping and drains on its own startup instead.
     if let Some(window) = app.get_webview_window("main") {
         crate::window::deliver_to_page(&window, "file-open-pending", &serde_json::json!({}));
+    }
+    bring_forward(app);
+}
+
+/// Put the app's window in front: someone asked for the app.
+pub fn bring_forward(app: &tauri::AppHandle) {
+    if let Some(window) = app.get_webview_window("main") {
+        let _ = window.unminimize();
         let _ = window.show();
         let _ = window.set_focus();
     }
@@ -214,10 +222,17 @@ pub fn drain_pending(app: &tauri::AppHandle) -> Vec<String> {
 
 /// The paths the OS launched the app with, on platforms where an associated
 /// file arrives as a plain argument (Windows and Linux; macOS uses an event).
-pub fn paths_from_args<I: Iterator<Item = String>>(args: I) -> Vec<std::path::PathBuf> {
+///
+/// A path that is not absolute is taken from the directory the launch was
+/// made in, which for a second copy of the app is not the directory this one
+/// is running in.
+pub fn paths_from_launch<I: Iterator<Item = String>>(
+    args: I,
+    directory: &std::path::Path,
+) -> Vec<std::path::PathBuf> {
     args.skip(1)
         .filter(|arg| !arg.starts_with('-'))
-        .map(std::path::PathBuf::from)
+        .map(|arg| directory.join(arg))
         .filter(|path| path.exists())
         .collect()
 }
@@ -225,6 +240,33 @@ pub fn paths_from_args<I: Iterator<Item = String>>(args: I) -> Vec<std::path::Pa
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    // A second copy of the app is started wherever the person was, and hands
+    // its arguments to the first, which is running somewhere else.
+    #[test]
+    fn a_file_named_from_another_directory_is_found_there() {
+        let directory = std::env::temp_dir().join(format!("td-launch-{}", std::process::id()));
+        std::fs::create_dir_all(&directory).unwrap();
+        let file = directory.join("tasks.csv");
+        std::fs::write(&file, "title\n").unwrap();
+
+        let args = vec![
+            "turbo-desktop".to_string(),
+            "--flag".to_string(),
+            "tasks.csv".to_string(),
+            "missing.csv".to_string(),
+            "task-manager://orders/1".to_string(),
+        ];
+        assert_eq!(paths_from_launch(args.into_iter(), &directory), vec![file.clone()]);
+
+        let absolute = vec!["turbo-desktop".to_string(), file.to_string_lossy().into_owned()];
+        assert_eq!(
+            paths_from_launch(absolute.into_iter(), std::path::Path::new("/nowhere")),
+            vec![file]
+        );
+
+        let _ = std::fs::remove_dir_all(&directory);
+    }
 
     // macOS tells the app about an opened file twice over: as a file to
     // open, and as a URL. It is one file, opened once.
@@ -258,24 +300,32 @@ mod tests {
     // macOS hands a file opened with the app to the same place as a link, as
     // a file: URL. Read as a link, its path became a page of the app:
     // GET /Users/someone/Desktop/tasks.csv.
+    /// A path of the kind this platform has, in a folder with a space in it.
+    fn somewhere(name: &str) -> std::path::PathBuf {
+        let folder = if cfg!(windows) {
+            r"C:\Users\someone\My Tasks"
+        } else {
+            "/Users/someone/My Tasks"
+        };
+        std::path::Path::new(folder).join(name)
+    }
+
     #[test]
     fn a_file_is_a_file_and_not_a_link() {
-        let opened = url::Url::parse("file:///Users/someone/Desktop/tasks.csv").unwrap();
+        let path = somewhere("tasks.csv");
+        let opened = url::Url::from_file_path(&path).unwrap();
 
-        assert_eq!(
-            opened_file(&opened),
-            Some(std::path::PathBuf::from("/Users/someone/Desktop/tasks.csv"))
-        );
+        assert_eq!(opened.scheme(), "file");
+        assert_eq!(opened_file(&opened), Some(path));
     }
 
     #[test]
     fn a_file_with_spaces_in_its_name_is_still_that_file() {
-        let opened = url::Url::parse("file:///Users/someone/My%20Tasks/to%20do.csv").unwrap();
+        let path = somewhere("to do.csv");
+        let opened = url::Url::from_file_path(&path).unwrap();
 
-        assert_eq!(
-            opened_file(&opened),
-            Some(std::path::PathBuf::from("/Users/someone/My Tasks/to do.csv"))
-        );
+        assert!(opened.as_str().contains("to%20do.csv"));
+        assert_eq!(opened_file(&opened), Some(path));
     }
 
     #[test]
@@ -287,7 +337,7 @@ mod tests {
 
     #[test]
     fn a_file_is_never_followed_as_a_link() {
-        let opened = url::Url::parse("file:///Users/someone/Desktop/tasks.csv").unwrap();
+        let opened = url::Url::from_file_path(somewhere("tasks.csv")).unwrap();
 
         assert!(resolve("http://localhost:3000", &opened).is_err());
     }
@@ -339,7 +389,10 @@ mod tests {
             "/nonexistent/other.txt".to_string(),
         ];
 
-        assert_eq!(paths_from_args(args.into_iter()), vec![file.clone()]);
+        assert_eq!(
+            paths_from_launch(args.into_iter(), std::path::Path::new("/")),
+            vec![file.clone()]
+        );
         std::fs::remove_file(&file).ok();
     }
 
